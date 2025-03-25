@@ -4,9 +4,14 @@ import datetime
 import os
 import pickle
 import dateparser
+import smtplib
+import pywhatkit
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+import emaildetails
 
 # Initialize the recognizer and TTS engine
 recognizer = sr.Recognizer()
@@ -61,6 +66,18 @@ def list_reminders():
             start = event["start"].get("dateTime", event["start"].get("date"))
             speak(f"{event['summary']} at {start}")
 
+# Function to get input from voice or keyboard
+def get_input(prompt):
+    speak(prompt)
+    choice = input("Press 'V' for voice input or 'K' for keyboard input: ").strip().lower()
+    if choice == 'v':
+        return listen()
+    elif choice == 'k':
+        return input("Type your response: ").strip()
+    else:
+        speak("Invalid choice. Defaulting to keyboard input.")
+        return input("Type your response: ").strip()
+
 # Function to listen for commands
 def listen():
     with sr.Microphone() as source:
@@ -77,19 +94,49 @@ def listen():
             print("Could not request results.")
             return ""
 
+# Function to send an email
+def send_email(to_email, subject, message):
+    sender_email = emaildetails.Name
+    sender_password = emaildetails.Password
+    
+    msg = MIMEMultipart()
+    msg["From"] = sender_email
+    msg["To"] = to_email
+    msg["Subject"] = subject
+    
+    msg.attach(MIMEText(message, "plain"))
+    
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, to_email, msg.as_string())
+        server.quit()
+        speak("Email sent successfully!")
+    except Exception as e:
+        print(f"Error: {e}")
+        speak("Failed to send email.")
+
+def send_whatsapp_message(phone_number, message):
+    try:
+        hour = datetime.datetime.now().hour
+        minute = datetime.datetime.now().minute + 2  # Send message after 2 minutes
+        pywhatkit.sendwhatmsg(phone_number, message, hour, minute)
+        speak("WhatsApp message sent successfully!")
+    except Exception as e:
+        print(f"Error: {e}")
+        speak("Failed to send WhatsApp message.")
+
 # Main loop
 while True:
-    command = listen()
+    command = get_input("How can I assist you?")
 
     if "hello" in command:
         speak("Hi, how can I assist you?")
     
-    elif "set a reminder" in command:
-        speak("What should I remind you about?")
-        event_name = listen()
-
-        speak("When should I remind you?")
-        event_time_str = listen()
+    elif "set reminder" in command:
+        event_name = get_input("What should I remind you about?")
+        event_time_str = get_input("When should I remind you?")
         event_time = dateparser.parse(event_time_str)
 
         if event_time:
@@ -97,12 +144,23 @@ while True:
         else:
             speak("I couldn't understand the time. Please try again.")
     
-    elif "show my reminders" in command:
+    elif "show reminders" in command:
         list_reminders()
+    
+    elif "send email" in command:
+        recipient = get_input("To whom should I send the email?")
+        subject = get_input("What is the subject of the email?")
+        message = get_input("What should I say in the email?")
+        send_email(recipient, subject, message)
+    
+    elif "send message" in command:
+        phone_number = get_input("To which phone number should I send the message?")
+        message = get_input("What message should I send?")
+        send_whatsapp_message(phone_number, message)
 
     elif "stop" in command:
         speak("Goodbye!")
         break
-
+    
     else:
         speak("Sorry, I don't understand.")
