@@ -13,9 +13,11 @@ By leveraging neuro-symbolic programming and external tool integration, LAMs dem
 ## 1.2 Problem Statement
 Current methods for performing everyday digital tasks, such as sending messages on WhatsApp or creating events in Google Calendar, require users to manually interact with application interfaces. These processes involve multiple steps, such as navigating to the desired contact or event page, entering details, and saving the changes. While functional, these methods can be time-consuming and inefficient, especially for repetitive tasks, complex operations involving attachments or multiple fields, or when multitasking.
 
-### WhatsApp Messaging: Sending messages on WhatsApp requires users to open the application, locate the contact or group, type the message, and optionally attach media files. This manual process can be cumbersome for frequent messaging or when users are engaged in other activities. There is a need for a more efficient mechanism to send messages using natural language commands that simplify this workflow.
+### WhatsApp Messaging: 
+Sending messages on WhatsApp requires users to open the application, locate the contact or group, type the message, and optionally attach media files. This manual process can be cumbersome for frequent messaging or when users are engaged in other activities. There is a need for a more efficient mechanism to send messages using natural language commands that simplify this workflow.
 
-### Google Calendar Event Creation: Creating events in Google Calendar involves navigating through the interface, inputting event details such as date, time, location, attendees, and reminders, and saving the event. This process can be tedious for recurring events or those involving many attendees. A streamlined approach using natural language commands could significantly reduce the effort required to create calendar events quickly and efficiently.
+### Google Calendar Event Creation: 
+Creating events in Google Calendar involves navigating through the interface, inputting event details such as date, time, location, attendees, and reminders, and saving the event. This process can be tedious for recurring events or those involving many attendees. A streamlined approach using natural language commands could significantly reduce the effort required to create calendar events quickly and efficiently.
 
 To address these challenges, integrating Large Action Models (LAMs) into these workflows offers a promising solution. LAMs can interpret natural language commands to automate multi-step processes seamlessly, enabling users to perform tasks with minimal manual intervention while improving efficiency and user experience.
 
